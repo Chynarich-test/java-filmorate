@@ -6,7 +6,6 @@ import ru.yandex.practicum.filmorate.controller.FilmController;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
-import java.time.Duration;
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -25,7 +24,7 @@ public class FilmControllerTest {
                 .name("Крутой фильм")
                 .description("С крутым описанием")
                 .releaseDate(LocalDate.of(2000, 1, 1))
-                .duration(Duration.ofMinutes(120))
+                .duration(120L)
                 .build();
         Film created = controller.create(validEntity);
         assertNotNull(created.getId());
@@ -38,7 +37,7 @@ public class FilmControllerTest {
                 .name(" ")
                 .description("А".repeat(201))
                 .releaseDate(LocalDate.of(1800, 1, 1))
-                .duration(Duration.ofMinutes(-10))
+                .duration(-10L)
                 .build();
         assertThrows(ValidationException.class, () -> controller.create(invalidEntity));
     }
@@ -49,10 +48,10 @@ public class FilmControllerTest {
                 .name("Крутой фильм")
                 .description("С крутым описанием")
                 .releaseDate(LocalDate.of(2000, 1, 1))
-                .duration(Duration.ofMinutes(120))
+                .duration(120L)
                 .build();
         Film film = controller.create(validEntity);
-        film.setDuration(Duration.ofMinutes(-100));
+        film.setDuration(-100L);
 
         assertThrows(ValidationException.class, () -> controller.update(film));
     }
@@ -63,7 +62,7 @@ public class FilmControllerTest {
                 .name("Крутой фильм")
                 .description("С крутым описанием")
                 .releaseDate(LocalDate.of(2000, 1, 1))
-                .duration(Duration.ofMinutes(120))
+                .duration(120L)
                 .build();
         Film created = controller.create(validEntity);
         created.setName("Новое имя");
