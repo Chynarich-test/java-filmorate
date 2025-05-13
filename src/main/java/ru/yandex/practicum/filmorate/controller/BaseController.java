@@ -11,7 +11,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-@RestController
 public abstract class BaseController<T extends IIdModel> {
     private final Map<Long, T> elements = new HashMap<>();
     private final Logger log;

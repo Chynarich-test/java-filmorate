@@ -1,10 +1,12 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.time.LocalDate;
 
+@RestController
 @RequestMapping("/films")
 public class FilmController extends BaseController<Film> {
 
