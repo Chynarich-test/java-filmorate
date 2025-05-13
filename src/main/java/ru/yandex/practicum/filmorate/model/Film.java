@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.model;
 import lombok.Builder;
 import lombok.Data;
 
-import java.time.Duration;
 import java.time.LocalDate;
 
 /**
@@ -16,7 +15,7 @@ public class Film implements IIdModel {
     String name;
     String description;
     LocalDate releaseDate;
-    Duration duration;
+    Long duration;
 
     @Override
     public Long getId() {

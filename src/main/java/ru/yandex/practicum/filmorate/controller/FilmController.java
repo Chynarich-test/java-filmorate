@@ -29,18 +29,20 @@ public class FilmController extends BaseController<Film> {
 
     @Override
     protected boolean isNotValidateNewElement(Film element) {
+        if (element == null) return true;
         if (element.getName() == null) return true;
         return isNotValidateElementValues(element);
     }
 
     @Override
     protected boolean isNotValidateElementValues(Film element) {
+        if (element == null) return true;
         if (element.getName() != null && element.getName().isEmpty()) return true;
         if (element.getDescription() != null && !element.getDescription().isEmpty()
                 && element.getDescription().length() > 200) return true;
         if (element.getReleaseDate() != null
                 && element.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) return true;
-        return element.getDuration() != null && !element.getDuration().isPositive();
+        return element.getDuration() != null && element.getDuration() <= 0;
     }
 
 }

@@ -30,6 +30,7 @@ public class UserController extends BaseController<User> {
 
     @Override
     protected boolean isNotValidateNewElement(User element) {
+        if (element == null) return true;
         if (element.getEmail() == null || element.getEmail().isEmpty()) return true;
         if (element.getLogin() == null || element.getLogin().isEmpty()) return true;
         return isNotValidateElementValues(element);
@@ -37,6 +38,7 @@ public class UserController extends BaseController<User> {
 
     @Override
     protected boolean isNotValidateElementValues(User element) {
+        if (element == null) return true;
         if (element.getEmail() != null && !element.getEmail().contains("@")) return true;
         if (element.getLogin() != null && !element.getLogin().isEmpty()
                 && element.getLogin().contains(" ")) return true;
