@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.IIdModel;
 
@@ -54,7 +55,7 @@ public abstract class BaseController<T extends IIdModel> {
 
         if (existingElement == null) {
             log.warn("Update - Элемент с ID {} не найден для обновления", newElement.getId());
-            throw new ValidationException("Элемент с ID " + newElement.getId() + " не найден");
+            throw new NotFoundException("Элемент с ID " + newElement.getId() + " не найден");
         }
 
         return Optional.ofNullable(elements.get(newElement.getId()))
