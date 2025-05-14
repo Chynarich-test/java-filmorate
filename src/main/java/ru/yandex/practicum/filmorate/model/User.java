@@ -5,17 +5,14 @@ import lombok.Data;
 
 import java.time.LocalDate;
 
-/**
- * Film.
- */
 @Data
 @Builder
-public class Film implements IIdModel {
+public class User implements IIdModel {
     Long id;
+    String email;
+    String login;
     String name;
-    String description;
-    LocalDate releaseDate;
-    Long duration;
+    LocalDate birthday;
 
     @Override
     public Long getId() {
