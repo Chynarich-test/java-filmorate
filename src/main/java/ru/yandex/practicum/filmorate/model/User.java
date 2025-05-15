@@ -7,12 +7,12 @@ import java.time.LocalDate;
 
 @Data
 @Builder
-public class User implements IIdModel {
-    Long id;
-    String email;
-    String login;
-    String name;
-    LocalDate birthday;
+public class User implements Entity {
+    private Long id;
+    private String email;
+    private String login;
+    private String name;
+    private LocalDate birthday;
 
     @Override
     public Long getId() {

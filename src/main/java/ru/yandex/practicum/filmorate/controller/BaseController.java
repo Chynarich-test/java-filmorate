@@ -8,14 +8,14 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
-import ru.yandex.practicum.filmorate.model.IIdModel;
+import ru.yandex.practicum.filmorate.model.Entity;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public abstract class BaseController<T extends IIdModel> {
+public abstract class BaseController<T extends Entity> {
     private final Map<Long, T> elements = new HashMap<>();
     private final Logger log;
 
@@ -68,9 +68,7 @@ public abstract class BaseController<T extends IIdModel> {
 
     protected abstract T modifiedBeforeAdd(T element);
 
-    //    думал сделать через рефлексию не абстрактный метод, но для меня как то тяжеловато и вызвать гетеры и сетеры
-//    через составление строки "get" + field.getName().substring(0, 1).toUpperCase() и так далее
-//    для меня выглядит как костыль какой то
+
     protected abstract void setElementValue(T target, T source);
 
     protected abstract boolean isNotValidateNewElement(@RequestBody T element);
