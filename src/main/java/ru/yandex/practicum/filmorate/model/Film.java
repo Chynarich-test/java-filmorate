@@ -4,6 +4,8 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Film.
@@ -16,6 +18,14 @@ public class Film implements Entity {
     private String description;
     private LocalDate releaseDate;
     private Long duration;
+    private Set<Long> likes;
+
+    public Set<Long> getLikes() {
+        if (likes == null) {
+            likes = new HashSet<>();
+        }
+        return likes;
+    }
 
     @Override
     public Long getId() {
