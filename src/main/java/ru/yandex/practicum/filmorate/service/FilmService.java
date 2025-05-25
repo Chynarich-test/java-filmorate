@@ -25,7 +25,7 @@ public class FilmService {
 
     public void addLike(Long filmId, Long userId) {
         Film film = inMemoryFilmStorage.getOne(filmId);
-        if (userId == null || inMemoryFilmStorage.getOne(userId) == null) {
+        if (userId == null || inMemoryUserStorage.getOne(userId) == null) {
             log.info("addLike - пользователь с id: {}, не найден", userId);
             throw new NotFoundException("Добавляемый пользователь не найден");
         }
@@ -35,9 +35,12 @@ public class FilmService {
 
     public void deleteLike(Long filmId, Long userId) {
         Film film = inMemoryFilmStorage.getOne(filmId);
-        if (userId == null || inMemoryFilmStorage.getOne(userId) == null || film.getLikes().isEmpty()) {
+        if (userId == null || inMemoryUserStorage.getOne(userId) == null) {
             log.info("deleteLike - пользователь с id: {}, не найден", userId);
             throw new NotFoundException("Удаляемый пользователь не найден");
+        }
+        if (!film.getLikes().contains(userId)) {
+            throw new NotFoundException("Лайк от пользователя не найден");
         }
         film.getLikes().remove(userId);
     }
