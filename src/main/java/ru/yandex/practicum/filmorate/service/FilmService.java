@@ -35,6 +35,10 @@ public class FilmService {
 
     public void deleteLike(Long filmId, Long userId) {
         Film film = inMemoryFilmStorage.getOne(filmId);
+        if (userId == null || inMemoryFilmStorage.getOne(userId) == null || film.getLikes().isEmpty()) {
+            log.info("deleteLike - пользователь с id: {}, не найден", userId);
+            throw new NotFoundException("Удаляемый пользователь не найден");
+        }
         film.getLikes().remove(userId);
     }
 
