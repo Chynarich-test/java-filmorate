@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.controller;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
 
 import java.util.Collection;
 import java.util.List;
@@ -12,31 +11,29 @@ import java.util.List;
 @RequestMapping("/films")
 public class FilmController {
     private final FilmService filmService;
-    private final InMemoryFilmStorage inMemoryFilmStorage;
 
-    public FilmController(FilmService filmService, InMemoryFilmStorage inMemoryFilmStorage) {
+    public FilmController(FilmService filmService) {
         this.filmService = filmService;
-        this.inMemoryFilmStorage = inMemoryFilmStorage;
     }
 
     @GetMapping
     public Collection<Film> findAll() {
-        return inMemoryFilmStorage.findAll();
+        return filmService.findAll();
     }
 
     @PostMapping
     public Film create(@RequestBody Film film) {
-        return inMemoryFilmStorage.create(film);
+        return filmService.create(film);
     }
 
     @PutMapping
     public Film update(@RequestBody Film newElement) {
-        return inMemoryFilmStorage.update(newElement);
+        return filmService.update(newElement);
     }
 
     @GetMapping("/{id}")
     public Film getFilmById(@PathVariable Long id) {
-        return inMemoryFilmStorage.getOne(id);
+        return filmService.getOne(id);
     }
 
     @PutMapping("/{id}/like/{userId}")

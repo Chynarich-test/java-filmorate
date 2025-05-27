@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.controller;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 
 import java.util.Collection;
 import java.util.List;
@@ -13,32 +12,30 @@ import java.util.List;
 public class UserController {
 
     private final UserService userService;
-    private final InMemoryUserStorage inMemoryUserStorage;
 
-    public UserController(UserService userService, InMemoryUserStorage inMemoryUserStorage) {
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.inMemoryUserStorage = inMemoryUserStorage;
     }
 
     @GetMapping
     public Collection<User> findAll() {
-        return inMemoryUserStorage.findAll();
+        return userService.findAll();
     }
 
     @PostMapping
     public User create(@RequestBody User user) {
-        return inMemoryUserStorage.create(user);
+        return userService.create(user);
     }
 
     @PutMapping
     public User update(@RequestBody User newElement) {
-        return inMemoryUserStorage.update(newElement);
+        return userService.update(newElement);
     }
 
 
     @GetMapping("/{id}")
     public User getUserById(@PathVariable Long id) {
-        return inMemoryUserStorage.getOne(id);
+        return userService.getOne(id);
     }
 
     @PutMapping("/{id}/friends/{friendId}")
@@ -53,7 +50,7 @@ public class UserController {
 
     @GetMapping("/{id}/friends")
     public List<User> getFriends(@PathVariable Long id) {
-        return inMemoryUserStorage.getFriends(id);
+        return userService.getFriends(id);
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")

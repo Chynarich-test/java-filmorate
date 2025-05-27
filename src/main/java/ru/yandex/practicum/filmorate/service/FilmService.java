@@ -1,31 +1,46 @@
 package ru.yandex.practicum.filmorate.service;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
 import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
 
+@Slf4j
 @Service
 public class FilmService {
     private final InMemoryFilmStorage inMemoryFilmStorage;
     private final InMemoryUserStorage inMemoryUserStorage;
-    private final Logger log;
 
     public FilmService(InMemoryFilmStorage inMemoryFilmStorage, InMemoryUserStorage inMemoryUserStorage) {
         this.inMemoryFilmStorage = inMemoryFilmStorage;
         this.inMemoryUserStorage = inMemoryUserStorage;
-        this.log = LoggerFactory.getLogger(FilmService.class);
+    }
+
+    public Collection<Film> findAll() {
+        return inMemoryFilmStorage.findAll();
+    }
+
+    public Film create(Film film) {
+        return inMemoryFilmStorage.create(film);
+    }
+
+    public Film update(Film newElement) {
+        return inMemoryFilmStorage.update(newElement);
+    }
+
+    public Film getOne(Long id) {
+        return inMemoryFilmStorage.getOne(id);
     }
 
     public void addLike(Long filmId, Long userId) {
         Film film = inMemoryFilmStorage.getOne(filmId);
-        if (userId == null || inMemoryUserStorage.getOne(userId) == null) {
+        if (inMemoryUserStorage.getOne(userId) == null) {
             log.info("addLike - пользователь с id: {}, не найден", userId);
             throw new NotFoundException("Добавляемый пользователь не найден");
         }

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -16,6 +17,26 @@ public class UserService {
     @Autowired
     public UserService(InMemoryUserStorage inMemoryUserStorage) {
         this.inMemoryUserStorage = inMemoryUserStorage;
+    }
+
+    public Collection<User> findAll() {
+        return inMemoryUserStorage.findAll();
+    }
+
+    public User create(User user) {
+        return inMemoryUserStorage.create(user);
+    }
+
+    public User update(User newElement) {
+        return inMemoryUserStorage.update(newElement);
+    }
+
+    public User getOne(Long id) {
+        return inMemoryUserStorage.getOne(id);
+    }
+
+    public List<User> getFriends(Long id) {
+        return inMemoryUserStorage.getFriends(id);
     }
 
     public void addFriend(Long userId1, Long userId2) {
