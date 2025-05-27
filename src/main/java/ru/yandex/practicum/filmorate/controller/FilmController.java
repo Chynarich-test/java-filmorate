@@ -1,48 +1,54 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
 
-import java.time.LocalDate;
+import java.util.Collection;
+import java.util.List;
 
 @RestController
 @RequestMapping("/films")
-public class FilmController extends BaseController<Film> {
+public class FilmController {
+    private final FilmService filmService;
 
-    public FilmController() {
-        super(Film.class);
+    public FilmController(FilmService filmService) {
+        this.filmService = filmService;
     }
 
-    @Override
-    protected Film modifiedBeforeAdd(Film element) {
-        return element;
+    @GetMapping
+    public Collection<Film> findAll() {
+        return filmService.findAll();
     }
 
-    @Override
-    protected void setElementValue(Film target, Film source) {
-        if (source.getName() != null) target.setName(source.getName());
-        if (source.getDescription() != null) target.setDescription(source.getDescription());
-        if (source.getReleaseDate() != null) target.setReleaseDate(source.getReleaseDate());
-        if (source.getDuration() != null) target.setDuration(source.getDuration());
+    @PostMapping
+    public Film create(@RequestBody Film film) {
+        return filmService.create(film);
     }
 
-    @Override
-    protected boolean isNotValidateNewElement(Film element) {
-        if (element == null) return true;
-        if (element.getName() == null) return true;
-        return isNotValidateElementValues(element);
+    @PutMapping
+    public Film update(@RequestBody Film newElement) {
+        return filmService.update(newElement);
     }
 
-    @Override
-    protected boolean isNotValidateElementValues(Film element) {
-        if (element == null) return true;
-        if (element.getName() != null && element.getName().isEmpty()) return true;
-        if (element.getDescription() != null && !element.getDescription().isEmpty()
-                && element.getDescription().length() > 200) return true;
-        if (element.getReleaseDate() != null
-                && element.getReleaseDate().isBefore(LocalDate.of(1895, 12, 28))) return true;
-        return element.getDuration() != null && element.getDuration() <= 0;
+    @GetMapping("/{id}")
+    public Film getFilmById(@PathVariable Long id) {
+        return filmService.getOne(id);
+    }
+
+    @PutMapping("/{id}/like/{userId}")
+    public void addLike(@PathVariable Long id, @PathVariable Long userId) {
+        filmService.addLike(id, userId);
+    }
+
+    @DeleteMapping("/{id}/like/{userId}")
+    public void deleteLike(@PathVariable Long id, @PathVariable Long userId) {
+        filmService.deleteLike(id, userId);
+    }
+
+    @GetMapping("/popular")
+    public List<Film> getPopular(@RequestParam(defaultValue = "10") int count) {
+        return filmService.getTopTen(count);
     }
 
 }

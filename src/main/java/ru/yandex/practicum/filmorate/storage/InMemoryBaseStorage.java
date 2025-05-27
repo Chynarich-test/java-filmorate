@@ -1,11 +1,7 @@
-package ru.yandex.practicum.filmorate.controller;
+package ru.yandex.practicum.filmorate.storage;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Entity;
@@ -15,21 +11,27 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public abstract class BaseController<T extends Entity> {
-    private final Map<Long, T> elements = new HashMap<>();
+public abstract class InMemoryBaseStorage<T extends Entity> implements BaseStorage<T> {
+    protected final Map<Long, T> elements = new HashMap<>();
     private final Logger log;
 
-    protected BaseController(Class<T> clazz) {
+    protected InMemoryBaseStorage(Class<T> clazz) {
         this.log = LoggerFactory.getLogger(clazz);
     }
 
-    @GetMapping
+    public T getOne(Long id) {
+        if (!elements.containsKey(id)) {
+            log.info("Create - элемент с айди: {}, не найден", id);
+            throw new NotFoundException("Элемент не найден");
+        }
+        return elements.get(id);
+    }
+
     public Collection<T> findAll() {
         return elements.values();
     }
 
-    @PostMapping
-    public T create(@RequestBody T element) {
+    public T create(T element) {
 
         if (isNotValidateNewElement(element)) {
             log.warn("Create - Ошибка валидации введенного элемента: {}", element.toString());
@@ -44,11 +46,15 @@ public abstract class BaseController<T extends Entity> {
         return element;
     }
 
-    @PutMapping
-    public T update(@RequestBody T newElement) {
+    public T update(T newElement) {
         if (isNotValidateElementValues(newElement)) {
             log.warn("Update - Ошибка валидации введенного элемента: {}", newElement.toString());
             throw new ValidationException("Ошибка валидации введенного элемента");
+        }
+
+        if (newElement.getId() == null) {
+            log.warn("Id при вставке равен null");
+            throw new ValidationException("Id не должен быть null");
         }
 
         T existingElement = elements.get(newElement.getId());
@@ -71,10 +77,9 @@ public abstract class BaseController<T extends Entity> {
 
     protected abstract void setElementValue(T target, T source);
 
-    protected abstract boolean isNotValidateNewElement(@RequestBody T element);
+    protected abstract boolean isNotValidateNewElement(T element);
 
-    protected abstract boolean isNotValidateElementValues(@RequestBody T element);
-
+    protected abstract boolean isNotValidateElementValues(T element);
 
     private long getNextId() {
         long currentMaxId = elements.keySet()
@@ -84,4 +89,5 @@ public abstract class BaseController<T extends Entity> {
                 .orElse(0);
         return ++currentMaxId;
     }
+
 }

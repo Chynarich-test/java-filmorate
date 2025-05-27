@@ -1,47 +1,60 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
 
-import java.time.LocalDate;
+import java.util.Collection;
+import java.util.List;
 
 @RestController
 @RequestMapping("/users")
-public class UserController extends BaseController<User> {
+public class UserController {
 
-    public UserController() {
-        super(User.class);
+    private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
     }
 
-    @Override
-    protected User modifiedBeforeAdd(User element) {
-        if (element.getName() == null || element.getName().isEmpty()) element.setName(element.getLogin());
-        return element;
+    @GetMapping
+    public Collection<User> findAll() {
+        return userService.findAll();
     }
 
-    @Override
-    protected void setElementValue(User target, User source) {
-        if (source.getEmail() != null) target.setEmail(source.getEmail());
-        if (source.getName() != null) target.setName(source.getName());
-        if (source.getLogin() != null) target.setLogin(source.getLogin());
-        if (source.getBirthday() != null) target.setBirthday(source.getBirthday());
+    @PostMapping
+    public User create(@RequestBody User user) {
+        return userService.create(user);
     }
 
-    @Override
-    protected boolean isNotValidateNewElement(User element) {
-        if (element == null) return true;
-        if (element.getEmail() == null || element.getEmail().isEmpty()) return true;
-        if (element.getLogin() == null || element.getLogin().isEmpty()) return true;
-        return isNotValidateElementValues(element);
+    @PutMapping
+    public User update(@RequestBody User newElement) {
+        return userService.update(newElement);
     }
 
-    @Override
-    protected boolean isNotValidateElementValues(User element) {
-        if (element == null) return true;
-        if (element.getEmail() != null && !element.getEmail().contains("@")) return true;
-        if (element.getLogin() != null && !element.getLogin().isEmpty()
-                && element.getLogin().contains(" ")) return true;
-        return element.getBirthday() != null && element.getBirthday().isAfter(LocalDate.now());
+
+    @GetMapping("/{id}")
+    public User getUserById(@PathVariable Long id) {
+        return userService.getOne(id);
+    }
+
+    @PutMapping("/{id}/friends/{friendId}")
+    public void addFriend(@PathVariable Long id, @PathVariable Long friendId) {
+        userService.addFriend(id, friendId);
+    }
+
+    @DeleteMapping("/{id}/friends/{friendId}")
+    public void removeFriend(@PathVariable Long id, @PathVariable Long friendId) {
+        userService.deleteFriend(id, friendId);
+    }
+
+    @GetMapping("/{id}/friends")
+    public List<User> getFriends(@PathVariable Long id) {
+        return userService.getFriends(id);
+    }
+
+    @GetMapping("/{id}/friends/common/{otherId}")
+    public List<User> getMutualFriends(@PathVariable Long id, @PathVariable Long otherId) {
+        return userService.showMutualFriends(id, otherId);
     }
 }
