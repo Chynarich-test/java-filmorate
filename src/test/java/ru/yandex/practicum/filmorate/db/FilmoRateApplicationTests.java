@@ -1,11 +1,13 @@
 package ru.yandex.practicum.filmorate.db;
 
 import lombok.RequiredArgsConstructor;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.jdbc.core.JdbcTemplate;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
@@ -32,6 +34,16 @@ class FilmoRateApplicationTests {
     private final FilmDbStorage filmStorage;
     private final GenreDbStorage genreStorage;
     private final MpaDbStorage mpaStorage;
+
+    @BeforeAll
+    static void setupDatabase(@Autowired JdbcTemplate jdbcTemplate) {
+        System.out.println("Выполняется настройка базы данных ОДИН РАЗ...");
+
+        jdbcTemplate.update("MERGE INTO genre KEY(genre_id) VALUES (1, 'Комедия'), (2, 'Драма'), (3, 'Мультфильм'), (4, 'Триллер'), (5, 'Документальный'), (6, 'Боевик')");
+        jdbcTemplate.update("MERGE INTO mpa KEY(mpa_id) VALUES (1, 'G'), (2, 'PG'), (3, 'PG-13'), (4, 'R'), (5, 'NC-17')");
+        jdbcTemplate.update("MERGE INTO friendship_status KEY(friendship_status_id) VALUES (1, 'PENDING_SENT'), (2, 'FRIENDS'), (3, 'DECLINED')");
+    }
+
 
     @Test
     public void testCreateAndGetUserById() {
