@@ -4,8 +4,9 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.Map;
+
 
 @Data
 @Builder
@@ -15,11 +16,11 @@ public class User implements Entity {
     private String login;
     private String name;
     private LocalDate birthday;
-    private Set<Long> friends;
+    private Map<Long, FriendshipStatus> friends;
 
-    public Set<Long> getFriends() {
+    public Map<Long, FriendshipStatus> getFriends() {
         if (friends == null) {
-            friends = new HashSet<>();
+            friends = new HashMap<>();
         }
         return friends;
     }
@@ -34,3 +35,4 @@ public class User implements Entity {
         this.id = id;
     }
 }
+

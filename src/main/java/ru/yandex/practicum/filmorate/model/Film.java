@@ -19,12 +19,21 @@ public class Film implements Entity {
     private LocalDate releaseDate;
     private Long duration;
     private Set<Long> likes;
+    private Mpa mpa;
+    private Set<Genre> genres;
 
     public Set<Long> getLikes() {
         if (likes == null) {
             likes = new HashSet<>();
         }
         return likes;
+    }
+
+    public Set<Genre> getGenres() {
+        if (genres == null) {
+            genres = new HashSet<>();
+        }
+        return genres;
     }
 
     @Override
