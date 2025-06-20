@@ -7,7 +7,7 @@ import lombok.Data;
 @Data
 @Builder
 @AllArgsConstructor
-public class Genre implements Entity {
+public class Genre implements Entity, Comparable<Genre> {
     private Long id;
     private String name;
 
@@ -19,5 +19,10 @@ public class Genre implements Entity {
     @Override
     public void setId(Long id) {
         this.id = id;
+    }
+
+    @Override
+    public int compareTo(Genre o) {
+        return Long.compare(this.id, o.id);
     }
 }

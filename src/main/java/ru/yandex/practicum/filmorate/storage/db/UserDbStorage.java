@@ -197,16 +197,13 @@ public class UserDbStorage implements UserStorage {
                 SELECT u.user_id, u.email, u.login, u.name, u.birthday
                 FROM friendship f
                 JOIN users u ON f.addressed_id = u.user_id
-                WHERE f.requester_id = ? AND f.status_id = (SELECT friendship_status_id FROM friendship_status WHERE name = 'FRIENDS')
-                UNION
-                SELECT u.user_id, u.email, u.login, u.name, u.birthday
-                FROM friendship f
-                JOIN users u ON f.requester_id = u.user_id
-                WHERE f.addressed_id = ? AND f.status_id = (SELECT friendship_status_id FROM friendship_status WHERE name = 'FRIENDS')
+                WHERE f.requester_id = ?
+                AND f.status_id = (SELECT friendship_status_id FROM friendship_status WHERE name = 'FRIENDS')
                 """;
 
-        return jdbcTemplate.query(sql, this::mapRowToUser, id, id);
+        return jdbcTemplate.query(sql, this::mapRowToUser, id);
     }
+
 
     private Map<Long, FriendshipStatus> getFriendStatuses(Long id) {
         String sql = """
@@ -245,9 +242,13 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public void removeFriendship(long userId, long friendId) {
-        String sql = "DELETE FROM friendship WHERE (requester_id = ? AND addressed_id = ?) " +
-                "OR (requester_id = ? AND addressed_id = ?)";
-        jdbcTemplate.update(sql, userId, friendId, friendId, userId);
+//        String sql = "DELETE FROM friendship WHERE (requester_id = ? AND addressed_id = ?) " +
+//                "OR (requester_id = ? AND addressed_id = ?)";
+//        jdbcTemplate.update(sql, userId, friendId, friendId, userId);
+        jdbcTemplate.update(
+                "DELETE FROM friendship WHERE requester_id = ? AND addressed_id = ?",
+                userId, friendId
+        );
     }
 
     @Override

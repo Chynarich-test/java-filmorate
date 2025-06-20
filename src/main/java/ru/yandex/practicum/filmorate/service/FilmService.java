@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.GenreStorage;
+import ru.yandex.practicum.filmorate.storage.MpaStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.Collection;
@@ -23,14 +24,17 @@ public class FilmService {
     private final FilmStorage filmStorage;
     private final UserStorage userStorage;
     private final GenreStorage genreStorage;
+    private final MpaStorage mpaStorage;
 
     @Autowired
     public FilmService(@Qualifier("filmDbStorage") FilmStorage filmStorage,
                        @Qualifier("userDbStorage") UserStorage userStorage,
-                       @Qualifier("genreDbStorage") GenreStorage genreStorage) {
+                       @Qualifier("genreDbStorage") GenreStorage genreStorage,
+                       @Qualifier("mpaDbStorage") MpaStorage mpaStorage) {
         this.filmStorage = filmStorage;
         this.userStorage = userStorage;
         this.genreStorage = genreStorage;
+        this.mpaStorage = mpaStorage;
     }
 
     public Collection<Film> findAll() {
@@ -39,11 +43,13 @@ public class FilmService {
 
     public Film create(Film film) {
         validateFilmGenres(film);
+        mpaStorage.getOne(film.getMpa().getId());
         return filmStorage.create(film);
     }
 
     public Film update(Film newElement) {
         validateFilmGenres(newElement);
+        mpaStorage.getOne(newElement.getMpa().getId());
         return filmStorage.update(newElement);
     }
 

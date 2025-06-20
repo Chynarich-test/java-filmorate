@@ -112,7 +112,7 @@ class FilmoRateApplicationTests {
     @Test
     public void testCreateAndGetFilmById() {
         Mpa mpa = new Mpa(1L, "G");
-        Set<Genre> genres = new HashSet<>();
+        SortedSet<Genre> genres = new TreeSet<>();
         genres.add(new Genre(1L, "Комедия"));
         Film newFilm = Film.builder()
                 .name("Test Film")

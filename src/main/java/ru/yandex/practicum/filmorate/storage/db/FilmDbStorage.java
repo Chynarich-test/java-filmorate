@@ -159,7 +159,7 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     private void setGenres(Map<Long, Film> filmsMap) {
-        String allGenresSql = "SELECT * FROM genre";
+        String allGenresSql = "SELECT genre_id, name FROM genre ORDER BY genre_id";
         List<Genre> allGenres = jdbcTemplate.query(allGenresSql, (rs, rowNum) ->
                 new Genre(rs.getLong("genre_id"), rs.getString("name")));
         Map<Long, Genre> genreMap = new HashMap<>();

@@ -6,6 +6,8 @@ import lombok.Data;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 /**
  * Film.
@@ -20,7 +22,7 @@ public class Film implements Entity {
     private Long duration;
     private Set<Long> likes;
     private Mpa mpa;
-    private Set<Genre> genres;
+    private SortedSet<Genre> genres;
 
     public Set<Long> getLikes() {
         if (likes == null) {
@@ -31,7 +33,7 @@ public class Film implements Entity {
 
     public Set<Genre> getGenres() {
         if (genres == null) {
-            genres = new HashSet<>();
+            genres = new TreeSet<>();
         }
         return genres;
     }
