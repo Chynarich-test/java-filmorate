@@ -10,4 +10,6 @@ public interface BaseStorage<T extends Entity> {
     T create(T element);
 
     T update(T newElement);
+
+    T getOne(Long id);
 }

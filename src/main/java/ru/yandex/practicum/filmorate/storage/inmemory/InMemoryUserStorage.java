@@ -1,10 +1,13 @@
-package ru.yandex.practicum.filmorate.storage;
+package ru.yandex.practicum.filmorate.storage.inmemory;
 
 import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.model.FriendshipStatus;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class InMemoryUserStorage extends InMemoryBaseStorage<User> implements UserStorage {
@@ -13,12 +16,35 @@ public class InMemoryUserStorage extends InMemoryBaseStorage<User> implements Us
         super(User.class);
     }
 
+    @Override
     public List<User> getFriends(Long id) {
-        List<Long> friendsIds = getOne(id).getFriends().stream().toList();
-        return findAll().stream()
-                .filter(e -> friendsIds.contains(e.getId()))
-                .toList();
+//        List<Long> friendsIds = getOne(id).getFriends().stream().toList();
+//        return findAll().stream()
+//                .filter(e -> friendsIds.contains(e.getId()))
+//                .toList();
+        return List.of();
     }
+
+    @Override
+    public Optional<FriendshipStatus> getFriendshipStatus(long userId, long friendId) {
+        return Optional.empty();
+    }
+
+    @Override
+    public void removeFriendship(long userId, long friendId) {
+
+    }
+
+    @Override
+    public void updateFriendshipStatus(long userId, long friendId, FriendshipStatus status) {
+
+    }
+
+    @Override
+    public void addFriendship(long userId, long friendId, FriendshipStatus status) {
+
+    }
+
 
     @Override
     protected User modifiedBeforeAdd(User element) {

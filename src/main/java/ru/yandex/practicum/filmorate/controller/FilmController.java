@@ -1,15 +1,19 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.List;
 
 @RestController
 @RequestMapping("/films")
 public class FilmController {
+    private static final LocalDate CINEMA_BIRTHDAY = LocalDate.of(1895, 12, 28);
+    private static final int MAX_DESCRIPTION_LENGTH = 200;
     private final FilmService filmService;
 
     public FilmController(FilmService filmService) {
@@ -23,11 +27,13 @@ public class FilmController {
 
     @PostMapping
     public Film create(@RequestBody Film film) {
+        validateFilm(film);
         return filmService.create(film);
     }
 
     @PutMapping
     public Film update(@RequestBody Film newElement) {
+        validateFilm(newElement);
         return filmService.update(newElement);
     }
 
@@ -51,4 +57,18 @@ public class FilmController {
         return filmService.getTopTen(count);
     }
 
+    private void validateFilm(Film film) {
+        if (film.getName() == null || film.getName().isBlank()) {
+            throw new ValidationException("Название фильма не может быть пустым.");
+        }
+        if (film.getReleaseDate() != null && film.getReleaseDate().isBefore(CINEMA_BIRTHDAY)) {
+            throw new ValidationException("Дата релиза не может быть раньше 28 декабря 1895 года.");
+        }
+        if (film.getDuration() != null && film.getDuration() <= 0) {
+            throw new ValidationException("Продолжительность фильма должна быть положительной.");
+        }
+        if (film.getDescription() != null && film.getDescription().length() > MAX_DESCRIPTION_LENGTH) {
+            throw new ValidationException("Максимальная длина описания — " + MAX_DESCRIPTION_LENGTH + " символов.");
+        }
+    }
 }
