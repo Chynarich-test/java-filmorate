@@ -66,9 +66,12 @@ CREATE TABLE IF NOT EXISTS film_like(
     PRIMARY KEY (film_id, user_id)
 );
 
-MERGE INTO friendship_status (name) KEY(name) VALUES ('PENDING_SENT');
-MERGE INTO friendship_status (name) KEY(name) VALUES ('FRIENDS');
-MERGE INTO friendship_status (name) KEY(name) VALUES ('DECLINED');
+INSERT INTO friendship_status (name) VALUES ('PENDING_SENT')
+  ON CONFLICT (name) DO NOTHING;
+INSERT INTO friendship_status (name) VALUES ('FRIENDS')
+  ON CONFLICT (name) DO NOTHING;
+INSERT INTO friendship_status (name) VALUES ('DECLINED')
+  ON CONFLICT (name) DO NOTHING;
 
 
 
