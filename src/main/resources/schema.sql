@@ -66,7 +66,9 @@ CREATE TABLE IF NOT EXISTS film_like(
     PRIMARY KEY (film_id, user_id)
 );
 
-INSERT INTO friendship_status (name) VALUES ('PENDING_SENT'), ('FRIENDS'), ('DECLINED');
+INSERT INTO friendship_status (name) VALUES ('PENDING_SENT');
+INSERT INTO friendship_status (name) VALUES ('FRIENDS');
+INSERT INTO friendship_status (name) VALUES ('DECLINED');
 
 
 
