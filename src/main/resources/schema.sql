@@ -67,7 +67,6 @@ CREATE TABLE IF NOT EXISTS film_like(
 );
 
 
-INSERT INTO friendship_status (name) VALUES ('FRIENDS');
 
 
 
