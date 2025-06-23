@@ -32,37 +32,10 @@ public class UserDbStorage implements UserStorage {
         this.namedParameterJdbcTemplate = namedParameterJdbcTemplate;
     }
 
-    //Код получался сложноватым, поэтому я решил убрать запрос друзей, если надо запросить вызывайте отельный метод
     @Override
     public Collection<User> findAll() {
         String sqlQuery = "select user_id, email, login, name, birthday from users";
         return jdbcTemplate.query(sqlQuery, this::mapRowToUser);
-//        if (listUsers.isEmpty()) {
-//            return Collections.emptyList();
-//        }
-//
-//        Map<Long, User> userMap = new HashMap<>();
-//        for (User user : listUsers) {
-//            user.setFriends(new HashMap<>());
-//            userMap.put(user.getId(), user);
-//        }
-//
-//        String friendsSql = "SELECT f.requester_id, f.addressed_id, fs.name as status_name FROM friendship f " +
-//                "JOIN friendship_status fs ON f.status_id = fs.friendship_status_id ";
-//
-//        jdbcTemplate.query(friendsSql, rse -> {
-//            long requesterId = rse.getLong("requester_id");
-//            long addressedId = rse.getLong("addressed_id");
-//            String statusName = rse.getString("status_name");
-//            FriendshipStatus friendshipStatus = FriendshipStatus.valueOf(statusName.toUpperCase());
-//
-//            User requester = userMap.get(requesterId);
-//            if (requester != null) {
-//                requester.getFriends().put(addressedId, friendshipStatus);
-//            }
-//        });
-//
-//        return new ArrayList<>(userMap.values());
     }
 
     @Override
@@ -84,10 +57,8 @@ public class UserDbStorage implements UserStorage {
     }
 
 
-    //Тут я тоже убрал обновление друзей, если надо вызывайте отдельный метод
     @Override
     public User update(User newElement) {
-        //Не знаю норм ли, но я так проверяю на существование пользователя
         getOne(newElement.getId());
 
         if (newElement.getName() == null || newElement.getName().isBlank()) {
@@ -105,57 +76,6 @@ public class UserDbStorage implements UserStorage {
                 newElement.getId());
 
         return newElement;
-
-//        long elementId = newElement.getId();
-//
-//        String selectIncoming =
-//                "SELECT requester_id, fs.name AS status_name " +
-//                        "FROM friendship f " +
-//                        "JOIN friendship_status fs ON fs.friendship_status_id = f.status_id " +
-//                        "WHERE addressed_id = ?";
-//        Map<Long, FriendshipStatus> incoming = jdbcTemplate.query(selectIncoming,
-//                rs -> {
-//                    Map<Long, FriendshipStatus> map = new HashMap<>();
-//                    while (rs.next()) {
-//                        long other = rs.getLong("requester_id");
-//                        FriendshipStatus st = FriendshipStatus.valueOf(rs.getString("status_name"));
-//                        map.put(other, st);
-//                    }
-//                    return map;
-//                }, elementId
-//        );
-//
-//        String deleteOutgoing =
-//                "DELETE FROM friendship WHERE requester_id = ?";
-//        jdbcTemplate.update(deleteOutgoing, elementId);
-//
-//        String insertSql =
-//                "INSERT INTO friendship(requester_id, addressed_id, status_id) " +
-//                        "VALUES (?, ?, (SELECT friendship_status_id FROM friendship_status WHERE name = ?))";
-//
-//        for (Map.Entry<Long, FriendshipStatus> entry : newElement.getFriends().entrySet()) {
-//            long other = entry.getKey();
-//            FriendshipStatus desired = entry.getValue();
-//
-//            if (desired == FriendshipStatus.PENDING_SENT) {
-//                if (incoming != null && incoming.get(other) == FriendshipStatus.PENDING_SENT) {
-//                    jdbcTemplate.update(
-//                            "UPDATE friendship SET status_id = " +
-//                                    "(SELECT friendship_status_id FROM friendship_status WHERE name = 'FRIENDS') " +
-//                                    "WHERE requester_id = ? AND addressed_id = ?",
-//                            other, elementId
-//                    );
-//                    jdbcTemplate.update(insertSql, elementId, other, "FRIENDS");
-//                } else {
-//                    jdbcTemplate.update(insertSql, elementId, other, "PENDING_SENT");
-//                }
-//            }
-//            else {
-//                jdbcTemplate.update(insertSql, elementId, other, desired.name());
-//            }
-//        }
-//
-//        return newElement;
     }
 
     @Override
@@ -232,6 +152,26 @@ public class UserDbStorage implements UserStorage {
         jdbcTemplate.update(sql, userId, friendId, statusId);
     }
 
+    @Override
+    public List<User> getMutualFriends(Long userId1, Long userId2) {
+        String sql = """
+                SELECT u.user_id, u.email, u.login, u.name, u.birthday
+                FROM users u
+                WHERE u.user_id IN (
+                  SELECT addressed_id
+                  FROM friendship
+                  WHERE requester_id IN (:userA, :userB)
+                  GROUP BY addressed_id
+                  HAVING COUNT(*) = 2);
+                """;
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("userA", userId1);
+        params.put("userB", userId2);
+
+        return namedParameterJdbcTemplate.query(sql, params, this::mapRowToUser);
+    }
+
 
     @Override
     public void updateFriendshipStatus(long userId, long friendId, FriendshipStatus status) {
@@ -242,9 +182,6 @@ public class UserDbStorage implements UserStorage {
 
     @Override
     public void removeFriendship(long userId, long friendId) {
-//        String sql = "DELETE FROM friendship WHERE (requester_id = ? AND addressed_id = ?) " +
-//                "OR (requester_id = ? AND addressed_id = ?)";
-//        jdbcTemplate.update(sql, userId, friendId, friendId, userId);
         jdbcTemplate.update(
                 "DELETE FROM friendship WHERE requester_id = ? AND addressed_id = ?",
                 userId, friendId
@@ -268,7 +205,6 @@ public class UserDbStorage implements UserStorage {
         return jdbcTemplate.queryForObject(sql, Long.class, statusName);
     }
 
-    //я так долго пишу этот код, что и забыл зачем, делал этот метод
     private Set<Long> getFriendsIds(Long id) {
         String friendsSql = "SELECT requester_id, addressed_id FROM friendship f " +
                 "JOIN friendship_status fs ON f.status_id = fs.friendship_status_id " +

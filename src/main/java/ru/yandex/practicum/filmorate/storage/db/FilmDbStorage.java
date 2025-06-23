@@ -205,19 +205,6 @@ public class FilmDbStorage implements FilmStorage {
     }
 
     private void setLikes(Film film) {
-        Map<Long, Film> likes = new HashMap<>();
-        likes.put(film.getId(), film);
-        setLikes(likes);
+        setLikes(Map.of(film.getId(), film));
     }
-
-//    private Mpa getOneMpa(Long id){
-//        String sql = "select mpa_id, name from mpa where "
-//    }
-
-//    private Mpa mapRowToMpa(ResultSet resultSet, int rowNum) throws SQLException {
-//        return Mpa.builder()
-//                .id(resultSet.getLong("mpa_id"))
-//                .name(resultSet.getString("name"))
-//                .build();
-//    }
 }

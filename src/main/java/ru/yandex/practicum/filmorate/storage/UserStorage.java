@@ -16,4 +16,6 @@ public interface UserStorage extends BaseStorage<User> {
     void updateFriendshipStatus(long userId, long friendId, FriendshipStatus status);
 
     void addFriendship(long userId, long friendId, FriendshipStatus status);
+
+    List<User> getMutualFriends(Long userId1, Long userId2);
 }

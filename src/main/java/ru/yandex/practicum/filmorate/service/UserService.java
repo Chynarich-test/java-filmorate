@@ -45,20 +45,6 @@ public class UserService {
         userStorage.getOne(friendId);
 
         userStorage.addFriendship(userId, friendId, FriendshipStatus.FRIENDS);
-
-        //Ужас, вот я не понимаю, в ТЗ написано "у пользователей Filmorate должна быть возможность
-        // добавлять друг друга в друзья с подтверждением дружбы"
-        //При этом как по тестам выяснилось, никаких подтверждений не надо, если добавил, то он сразу твой друг
-        //Те кто пишут задания, специально издеваются над студентами
-
-//        Optional<FriendshipStatus> inverseRequest = userStorage.getFriendshipStatus(friendId, userId);
-//
-//        if (inverseRequest.isPresent() && inverseRequest.get() == FriendshipStatus.PENDING_SENT) {
-//            userStorage.updateFriendshipStatus(friendId, userId, FriendshipStatus.FRIENDS);
-//            userStorage.addFriendship(userId, friendId, FriendshipStatus.FRIENDS);
-//        } else {
-//            userStorage.addFriendship(userId, friendId, FriendshipStatus.PENDING_SENT);
-//        }
     }
 
     public void deleteFriend(Long userId, Long friendId) {
@@ -69,10 +55,6 @@ public class UserService {
     }
 
     public List<User> showMutualFriends(Long userId1, Long userId2) {
-        List<User> friends1 = userStorage.getFriends(userId1);
-        List<User> friends2 = userStorage.getFriends(userId2);
-
-        friends1.retainAll(friends2);
-        return friends1;
+        return userStorage.getMutualFriends(userId1, userId2);
     }
 }
